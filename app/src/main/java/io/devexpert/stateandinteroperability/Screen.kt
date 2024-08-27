@@ -16,12 +16,16 @@ import io.devexpert.stateandinteroperability.ui.theme.StateAndInteroperabilityTh
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screen(
+    snackbarHost: @Composable () -> Unit = { },
     content: @Composable () -> Unit
 ) {
     StateAndInteroperabilityTheme {
         Scaffold(
-            modifier = Modifier.fillMaxSize().imePadding(),
-            topBar = { TopAppBar(title = { Text("State and Interoperability") }) }
+            modifier = Modifier
+                .fillMaxSize()
+                .imePadding(),
+            topBar = { TopAppBar(title = { Text("State and Interoperability") }) },
+            snackbarHost = snackbarHost
         ) { padding ->
             Box(
                 modifier = Modifier
