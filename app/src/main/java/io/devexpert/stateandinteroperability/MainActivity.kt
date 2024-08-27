@@ -11,13 +11,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.devexpert.stateandinteroperability.data.Product
 import io.devexpert.stateandinteroperability.data.sampleProducts
 
-class MainState(searchTerm: String, products: List<Product>) {
-    var searchTerm by mutableStateOf(searchTerm)
+class MainViewModel : ViewModel() {
+    var searchTerm by mutableStateOf("")
         private set
-    var products by mutableStateOf(products)
+    var products by mutableStateOf(sampleProducts())
         private set
 
     fun onSearchChange(newSearchTerm: String) {
@@ -25,32 +27,23 @@ class MainState(searchTerm: String, products: List<Product>) {
         products = sampleProducts().filter { it.name.contains(searchTerm, true) }
     }
 }
-
-@Composable
-fun rememberMainState(
-    searchTerm: String = "",
-    products: List<Product> = sampleProducts()
-): MainState {
-    return remember { MainState(searchTerm, products) }
-}
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             Screen {
-                val state = rememberMainState()
+                val vm = viewModel<MainViewModel>()
 
                 Column {
 
                     SearchBar(
-                        searchTerm = state.searchTerm,
-                        onSearchChange = state::onSearchChange
+                        searchTerm = vm.searchTerm,
+                        onSearchChange = vm::onSearchChange
                     )
 
                     ProductList(
-                        products = state.products,
+                        products = vm.products,
                         onProductClick = { Log.d("MainActivity", "Product clicked: $it") }
                     )
                 }
