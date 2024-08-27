@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
@@ -27,12 +28,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ProductCounter() {
-    var count by remember { mutableIntStateOf(0) }
+    var count by rememberSaveable { mutableIntStateOf(0) }
 
     Column {
-        Text("Productos vistos: $count")
+        Text("Watched Products: $count")
         Button(onClick = { count++ }) {
-            Text("Ver siguiente producto")
+            Text("Watch next product")
         }
     }
 }
