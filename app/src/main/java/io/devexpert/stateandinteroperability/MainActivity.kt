@@ -1,13 +1,16 @@
 package io.devexpert.stateandinteroperability
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.devexpert.stateandinteroperability.data.Product
@@ -29,9 +32,18 @@ class MainViewModel : ViewModel() {
         )
     }
 
+    fun onProductClick(product: Product) {
+        _state.value = _state.value.copy(message = "Product clicked: ${product.name}")
+    }
+
+    fun onMessageShown() {
+        _state.value = _state.value.copy(message = null)
+    }
+
     data class UiState(
         val searchTerm: String = "",
-        val products: List<Product> = sampleProducts()
+        val products: List<Product> = sampleProducts(),
+        val message: String? = null
     )
 }
 
@@ -40,9 +52,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Screen {
+            val snackbarHostState = remember { SnackbarHostState() }
+            Screen(
+                snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+            ) {
                 val vm = viewModel<MainViewModel>()
                 val state by vm.state.collectAsState()
+
+                LaunchedEffect(state.message) {
+                    state.message?.let { snackbarHostState.showSnackbar(it) }
+                    vm.onMessageShown()
+                }
 
                 Column {
 
@@ -53,7 +73,7 @@ class MainActivity : ComponentActivity() {
 
                     ProductList(
                         products = state.products,
-                        onProductClick = { Log.d("MainActivity", "Product clicked: $it") }
+                        onProductClick = vm::onProductClick
                     )
                 }
             }
