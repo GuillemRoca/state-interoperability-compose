@@ -2,6 +2,7 @@ package io.devexpert.stateandinteroperability
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -19,7 +20,7 @@ fun Screen(
 ) {
     StateAndInteroperabilityTheme {
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().imePadding(),
             topBar = { TopAppBar(title = { Text("State and Interoperability") }) }
         ) { padding ->
             Box(
