@@ -7,10 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.devexpert.stateandinteroperability.data.Product
@@ -18,6 +18,7 @@ import io.devexpert.stateandinteroperability.data.sampleProducts
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
     private val _state = MutableStateFlow(UiState())
@@ -32,18 +33,9 @@ class MainViewModel : ViewModel() {
         )
     }
 
-    fun onProductClick(product: Product) {
-        _state.value = _state.value.copy(message = "Product clicked: ${product.name}")
-    }
-
-    fun onMessageShown() {
-        _state.value = _state.value.copy(message = null)
-    }
-
     data class UiState(
         val searchTerm: String = "",
-        val products: List<Product> = sampleProducts(),
-        val message: String? = null
+        val products: List<Product> = sampleProducts()
     )
 }
 
@@ -53,16 +45,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val snackbarHostState = remember { SnackbarHostState() }
+            val scope = rememberCoroutineScope()
             Screen(
                 snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
             ) {
                 val vm = viewModel<MainViewModel>()
                 val state by vm.state.collectAsState()
-
-                LaunchedEffect(state.message) {
-                    state.message?.let { snackbarHostState.showSnackbar(it) }
-                    vm.onMessageShown()
-                }
 
                 Column {
 
@@ -73,7 +61,14 @@ class MainActivity : ComponentActivity() {
 
                     ProductList(
                         products = state.products,
-                        onProductClick = vm::onProductClick
+                        onProductClick = { product ->
+                            scope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                                snackbarHostState.showSnackbar(
+                                    "Product clicked: ${product.name}"
+                                )
+                            }
+                        }
                     )
                 }
             }
