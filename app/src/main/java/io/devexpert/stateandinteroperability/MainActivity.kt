@@ -26,10 +26,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Screen {
-                ProductList(
-                    products = sampleProducts(),
-                    onProductClick = { Log.d("MainActivity", "Product clicked: $it") }
-                )
+                Column {
+                    var searchTerm by remember { mutableStateOf("") }
+                    val products = remember(searchTerm) {
+                        sampleProducts().filter { it.name.contains(searchTerm, true) }
+                    }
+
+                    SearchBar(searchTerm = searchTerm, onSearchChange = { searchTerm = it })
+
+                    ProductList(
+                        products = products,
+                        onProductClick = { Log.d("MainActivity", "Product clicked: $it") }
+                    )
+                }
             }
         }
     }
