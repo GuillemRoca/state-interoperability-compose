@@ -21,21 +21,32 @@ import androidx.compose.ui.Alignment
 import io.devexpert.stateandinteroperability.data.sampleProducts
 
 class MainActivity : ComponentActivity() {
+
+    class MainState {
+        var searchTerm by mutableStateOf("")
+        var products by mutableStateOf(sampleProducts())
+
+        fun onSearchChange(searchTerm: String) {
+            this.searchTerm = searchTerm
+            products = sampleProducts().filter { it.name.contains(searchTerm, true) }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             Screen {
                 Column {
-                    var searchTerm by remember { mutableStateOf("") }
-                    val products = remember(searchTerm) {
-                        sampleProducts().filter { it.name.contains(searchTerm, true) }
-                    }
+                    val state = remember { MainState() }
 
-                    SearchBar(searchTerm = searchTerm, onSearchChange = { searchTerm = it })
+                    SearchBar(
+                        searchTerm = state.searchTerm,
+                        onSearchChange = { state.onSearchChange(it) }
+                    )
 
                     ProductList(
-                        products = products,
+                        products = state.products,
                         onProductClick = { Log.d("MainActivity", "Product clicked: $it") }
                     )
                 }
