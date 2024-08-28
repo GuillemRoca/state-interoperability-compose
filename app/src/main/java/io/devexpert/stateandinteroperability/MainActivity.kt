@@ -18,17 +18,21 @@ import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import io.devexpert.stateandinteroperability.data.sampleProducts
 
 class MainActivity : ComponentActivity() {
 
+    @Composable
+    fun rememberMainState() = remember { MainState() }
+
     class MainState {
         var searchTerm by mutableStateOf("")
-        var products by mutableStateOf(sampleProducts())
+        val products
+            get() = sampleProducts().filter { it.name.contains(searchTerm, true) }
 
         fun onSearchChange(searchTerm: String) {
             this.searchTerm = searchTerm
-            products = sampleProducts().filter { it.name.contains(searchTerm, true) }
         }
     }
 
@@ -38,7 +42,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Screen {
                 Column {
-                    val state = remember { MainState() }
+                    val state = rememberMainState()
 
                     SearchBar(
                         searchTerm = state.searchTerm,
