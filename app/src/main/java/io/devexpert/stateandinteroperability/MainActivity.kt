@@ -1,6 +1,7 @@
 package io.devexpert.stateandinteroperability
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,6 +18,7 @@ import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import io.devexpert.stateandinteroperability.data.sampleProducts
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +26,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Screen {
-                ProductSortSelector()
+                ProductList(
+                    products = sampleProducts(),
+                    onProductClick = { Log.d("MainActivity", "Product clicked: $it") }
+                )
             }
         }
     }
