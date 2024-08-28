@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,14 +44,19 @@ class MainActivity : ComponentActivity() {
 
     data class ProductSort(val field: String, val ascending: Boolean)
 
-    val productSortSaver = listSaver<ProductSort, Any>(
+    private val productSortListSaver = listSaver<ProductSort, Any>(
         save = { listOf(it.field, it.ascending) },
         restore = { ProductSort(it[0] as String, it[1] as Boolean) }
     )
 
+    private val productSortMapSaver = mapSaver(
+        save = { mapOf("field" to it.field, "ascending" to it.ascending) },
+        restore = { ProductSort(it["field"] as String, it["ascending"] as Boolean) }
+    )
+
     @Composable
     fun ProductSortSelector() {
-        var sortOption by rememberSaveable(stateSaver = productSortSaver) {
+        var sortOption by rememberSaveable(stateSaver = productSortMapSaver) {
             mutableStateOf(ProductSort("price", true))
         }
 
