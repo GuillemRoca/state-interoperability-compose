@@ -20,8 +20,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 HomeScreen(onProductClick = {
-                    val args = bundleOf("productName" to it)
-                    findNavController().navigate(R.id.detailComposable, args)
+                    findNavController().navigate(route = "detail")
                 })
             }
         }

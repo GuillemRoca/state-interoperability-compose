@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.fragment.compose.AndroidFragment
 import androidx.fragment.compose.rememberFragmentState
-import androidx.navigation.fragment.compose.LocalFragment
 import io.devexpert.stateandinteroperability.Screen
 
 @Composable
@@ -23,10 +22,7 @@ fun DetailScreen() {
                 Text(if (contentVisible) "Hide" else "Show")
             }
             if (contentVisible) {
-                AndroidFragment<DetailFragment>(
-                    fragmentState = fragmentState,
-                    arguments = LocalFragment.current.requireArguments()
-                )
+                AndroidFragment<DetailFragment>(fragmentState = fragmentState)
             }
         }
     }
