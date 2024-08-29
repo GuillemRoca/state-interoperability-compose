@@ -7,18 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.devexpert.stateandinteroperability.ConnectionStatus
 import io.devexpert.stateandinteroperability.ProductList
 import io.devexpert.stateandinteroperability.Screen
 import io.devexpert.stateandinteroperability.SearchBar
-import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(vm: HomeViewModel = viewModel()) {
+fun HomeScreen(vm: HomeViewModel = viewModel(), onProductClick: (String) -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     Screen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) {
@@ -33,14 +30,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
             ProductList(
                 products = state.products,
-                onProductClick = { product ->
-                    scope.launch {
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(
-                            "Product clicked: ${product.name}"
-                        )
-                    }
-                }
+                onProductClick = { onProductClick(it.name) }
             )
         }
     }

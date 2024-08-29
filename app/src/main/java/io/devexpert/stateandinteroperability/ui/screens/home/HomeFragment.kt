@@ -5,6 +5,7 @@ import android.view.View
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import io.devexpert.stateandinteroperability.R
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -17,7 +18,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                HomeScreen()
+                HomeScreen(onProductClick = { findNavController().navigate(R.id.detailComposable) })
             }
         }
     }
