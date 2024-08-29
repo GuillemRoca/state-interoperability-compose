@@ -1,17 +1,16 @@
 package io.devexpert.stateandinteroperability
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import io.devexpert.stateandinteroperability.ui.screens.home.HomeScreen
+import androidx.fragment.app.FragmentActivity
+import io.devexpert.stateandinteroperability.ui.screens.home.HomeFragment
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            HomeScreen()
-        }
+        supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, HomeFragment())
+            .commit()
     }
 }
