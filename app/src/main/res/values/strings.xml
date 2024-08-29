@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">State And Interoperability</string>
     <string name="this_is_a_classic_view">This is a Classic View</string>
+    <string name="this_is_a_detail_fragment">This is a detail fragment</string>
 </resources>
