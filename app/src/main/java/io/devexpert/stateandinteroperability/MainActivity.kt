@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.devexpert.stateandinteroperability.data.Product
@@ -32,6 +33,7 @@ import io.devexpert.stateandinteroperability.data.sampleProducts
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
     private val _state = MutableStateFlow(UiState())
@@ -87,11 +89,6 @@ class MainActivity : ComponentActivity() {
                 val vm = viewModel<MainViewModel>()
                 val state by vm.state.collectAsState()
 
-                LaunchedEffect(state.message) {
-                    state.message?.let { snackbarHostState.showSnackbar(it) }
-                    vm.onMessageShown()
-                }
-
                 Column {
                     val state = rememberMainState()
 
@@ -99,10 +96,15 @@ class MainActivity : ComponentActivity() {
                         searchTerm = state.searchTerm,
                         onSearchChange = { state.onSearchChange(it) }
                     )
-
+                    val scope = rememberCoroutineScope()
                     ProductList(
                         products = state.products,
-                        onProductClick = vm::onProductClick
+                        onProductClick = {
+                            scope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                                snackbarHostState.showSnackbar("Product clicked: ${it.name}")
+                            }
+                        }
                     )
                 }
             }
