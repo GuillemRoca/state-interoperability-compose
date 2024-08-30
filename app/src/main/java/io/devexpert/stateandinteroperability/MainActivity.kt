@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.getSystemService
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.devexpert.stateandinteroperability.data.Product
@@ -93,7 +94,7 @@ fun ConnectionStatus() {
     var isConnected by remember { mutableStateOf(false) }
     val context = LocalContext.current
     DisposableEffect(context) {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = context.getSystemService<ConnectivityManager>()
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 isConnected = true
@@ -103,9 +104,9 @@ fun ConnectionStatus() {
                 isConnected = false
             }
         }
-        connectivityManager.registerDefaultNetworkCallback(networkCallback)
+        connectivityManager?.registerDefaultNetworkCallback(networkCallback)
         onDispose {
-            connectivityManager.unregisterNetworkCallback(networkCallback)
+            connectivityManager?.unregisterNetworkCallback(networkCallback)
         }
     }
 
