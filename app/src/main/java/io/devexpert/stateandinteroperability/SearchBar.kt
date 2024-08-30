@@ -24,7 +24,7 @@ fun SearchBar(searchTerm: String, onSearchChange: (String) -> Unit) {
     var recomposeCount by remember { mutableStateOf(0) }
     SideEffect {
         recomposeCount++
-        Log.d("Recomposition", "Recompose count: $recomposeCount")
+        Log.d("SearchBar", "Recompose count: $recomposeCount")
     }
     var localSearchTerm by remember { mutableStateOf(searchTerm) }
 
